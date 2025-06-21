@@ -227,7 +227,7 @@ function loop() {
     ctx.textAlign = "center";
     ctx.fillText('Game Over', canvas.width/2, 90);
     ctx.font = '18px Arial';
-    ctx.fillText('Tekan [Space] untuk ulang', canvas.width/2, 120);
+    ctx.fillText('Tekan [Space] atau Tap untuk ulang', canvas.width/2, 120);
     ctx.textAlign = "start";
     return;
   }
@@ -268,6 +268,10 @@ loop();
 let touchActive = false;
 
 canvas.addEventListener('touchstart', function(e) {
+  if (gameOver) {
+    resetGame();
+    return;
+  }
   e.preventDefault();
   if (!touchActive) {
     // Double jump
@@ -288,6 +292,10 @@ canvas.addEventListener('touchend', function(e) {
 }, { passive: false });
 
 document.body.addEventListener('touchstart', function(e) {
+  if (gameOver) {
+    resetGame();
+    return;
+  }
   if (!touchActive) {
     if (dino.jumpCount < dino.maxJump) {
       dino.vy = dino.jumpPower;
