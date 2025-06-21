@@ -269,12 +269,12 @@ let touchActive = false;
 
 canvas.addEventListener('touchstart', function(e) {
   if (gameOver) {
-    resetGame();
+    // Tunda reset agar audio game over sempat terdengar
+    setTimeout(resetGame, 500);
     return;
   }
   e.preventDefault();
   if (!touchActive) {
-    // Double jump
     if (dino.jumpCount < dino.maxJump) {
       dino.vy = dino.jumpPower;
       dino.isJumping = true;
@@ -282,18 +282,12 @@ canvas.addEventListener('touchstart', function(e) {
     }
   }
   touchActive = true;
-  spacePressed = true; // agar slow fall juga aktif
-}, { passive: false });
-
-canvas.addEventListener('touchend', function(e) {
-  e.preventDefault();
-  touchActive = false;
-  spacePressed = false;
+  spacePressed = true;
 }, { passive: false });
 
 document.body.addEventListener('touchstart', function(e) {
   if (gameOver) {
-    resetGame();
+    setTimeout(resetGame, 500);
     return;
   }
   if (!touchActive) {
