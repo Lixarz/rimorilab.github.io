@@ -144,8 +144,9 @@ function resetGame() {
   score = 0;
   dino.y = 150;
   dino.vy = 0;
+  dino.isJumping = false;
+  dino.jumpCount = 0;
   gameOver = false;
-  loop();
 }
 
 function loop() {
