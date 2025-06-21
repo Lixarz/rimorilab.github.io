@@ -287,6 +287,23 @@ canvas.addEventListener('touchend', function(e) {
   spacePressed = false;
 }, { passive: false });
 
+document.body.addEventListener('touchstart', function(e) {
+  if (!touchActive) {
+    if (dino.jumpCount < dino.maxJump) {
+      dino.vy = dino.jumpPower;
+      dino.isJumping = true;
+      dino.jumpCount++;
+    }
+  }
+  touchActive = true;
+  spacePressed = true;
+}, { passive: false });
+
+document.body.addEventListener('touchend', function(e) {
+  touchActive = false;
+  spacePressed = false;
+}, { passive: false });
+
 window.addEventListener('DOMContentLoaded', function() {
   const backsound = document.getElementById('backsound');
   if (backsound) {
