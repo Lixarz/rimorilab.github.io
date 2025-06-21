@@ -149,7 +149,6 @@ function resetGame() {
 }
 
 function loop() {
-  if (gameOver) return;
   ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -161,75 +160,76 @@ function loop() {
   dino.draw();
 
   // Dino jump & gravity
-  dino.y += dino.vy;
+  if (!gameOver) {
+    dino.y += dino.vy;
 
-  // Jika spasi masih ditekan DAN dino masih naik (vy < 0), slow fall
-  if (spacePressed && dino.vy < 0) {
-    dino.vy += dino.gravity * 0.15; // slow fall saat naik
-  } else {
-    dino.vy += dino.gravity; // normal gravity
-  }
+    // Jika spasi masih ditekan DAN dino masih naik (vy < 0), slow fall
+    if (spacePressed && dino.vy < 0) {
+      dino.vy += dino.gravity * 0.15; // slow fall saat naik
+    } else {
+      dino.vy += dino.gravity; // normal gravity
+    }
 
-  // Batas atas
-  if (dino.y < 0) {
-    dino.y = 0;
-  }
+    // Batas atas
+    if (dino.y < 0) {
+      dino.y = 0;
+    }
 
-  // Batas bawah (tanah)
-  if (dino.y > 150) {
-    dino.y = 150;
-    dino.vy = 0;
-    dino.isJumping = false;
-    dino.jumpCount = 0;
-  }
+    // Batas bawah (tanah)
+    if (dino.y > 150) {
+      dino.y = 150;
+      dino.vy = 0;
+      dino.isJumping = false;
+      dino.jumpCount = 0;
+    }
 
-  // Obstacles
-  spawnTimer++;
-  if (spawnTimer > 70 + Math.random() * 40) {
-    spawnObstacle();
-    spawnTimer = 0;
-  }
-   const COLLISION_MARGIN = 8; // Bisa diubah sesuai kebutuhan
+    // Obstacles
+    spawnTimer++;
+    if (spawnTimer > 70 + Math.random() * 40) {
+      spawnObstacle();
+      spawnTimer = 0;
+    }
+    const COLLISION_MARGIN = 8; // Bisa diubah sesuai kebutuhan
 
-  for (let i = 0; i < obstacles.length; i++) {
-    let obs = obstacles[i];
-    obs.x -= obs.speed;
-    ctx.fillStyle = obs.color;
-    ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+    for (let i = 0; i < obstacles.length; i++) {
+      let obs = obstacles[i];
+      obs.x -= obs.speed;
+      ctx.fillStyle = obs.color;
+      ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
 
-    // Collision detection dengan margin
-    if (
-      dino.x + COLLISION_MARGIN < obs.x + obs.w &&
-      dino.x + dino.w - COLLISION_MARGIN > obs.x &&
-      dino.y + COLLISION_MARGIN < obs.y + obs.h &&
-      dino.y + dino.h - COLLISION_MARGIN > obs.y
-    ) {
-      gameOver = true;
-      const gameoverAudio = document.getElementById('gameover-audio');
-      if (gameoverAudio) {
-        gameoverAudio.currentTime = 0;
-        gameoverAudio.play().catch(()=>{});
+      // Collision detection dengan margin
+      if (
+        dino.x + COLLISION_MARGIN < obs.x + obs.w &&
+        dino.x + dino.w - COLLISION_MARGIN > obs.x &&
+        dino.y + COLLISION_MARGIN < obs.y + obs.h &&
+        dino.y + dino.h - COLLISION_MARGIN > obs.y
+      ) {
+        gameOver = true;
+        const gameoverAudio = document.getElementById('gameover-audio');
+        if (gameoverAudio) {
+          gameoverAudio.currentTime = 0;
+          gameoverAudio.play().catch(()=>{});
+        }
       }
     }
-  }
-  obstacles = obstacles.filter(obs => obs.x + obs.w > 0);
+    obstacles = obstacles.filter(obs => obs.x + obs.w > 0);
 
-  // Score
-  ctx.fillStyle = '#222';
-  ctx.font = '20px Arial';
-  ctx.fillText('Score: ' + score, canvas.width - 140, 30);
-  score++;
-
-  // Game Over
-  if (gameOver) {
+    // Score
+    ctx.fillStyle = '#222';
+    ctx.font = '20px Arial';
+    ctx.fillText('Score: ' + score, canvas.width - 140, 30);
+    score++;
+  } else {
+    // Tampilkan pesan Game Over dan Score terakhir
     ctx.fillStyle = '#222';
     ctx.font = '32px Arial';
     ctx.textAlign = "center";
     ctx.fillText('Game Over', canvas.width/2, 90);
     ctx.font = '18px Arial';
     ctx.fillText('Tekan [Space] atau Tap untuk ulang', canvas.width/2, 120);
+    ctx.font = '20px Arial';
+    ctx.fillText('Score: ' + score, canvas.width/2, 160);
     ctx.textAlign = "start";
-    return;
   }
 
   requestAnimationFrame(loop);
